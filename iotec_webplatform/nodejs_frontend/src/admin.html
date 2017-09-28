@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+ <title>
+   new - demo
+ </title>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
+<script>
+
+function BearObject(myNombre) {
+    
+    this.name = myNombre;
+    this.toJsonString = function () { return JSON.stringify(this); };
+
+};
+
+
+function addBearDemo()
+{
+	try
+  {
+
+
+  	var myBear = new BearObject(
+     $("#nombre").val() 
+      
+     );
+  
+  	alert(myBear.toJsonString());
+
+  	 jQuery.ajax({
+           type: "POST",
+           url: "http://localhost:8087/api/devices",
+            headers: {
+            'Content-Type':'application/x-www-form-urlencoded'
+           },
+           data: {'token': sessionStorage.token,
+                  'name': myBear.name },
+           contentType: "application/json; charset=utf-8",
+           dataType: "json",
+           success: function (response) {
+                // do something
+                alert (response + " " + response.message);
+                getBearList();
+           },
+       
+           error: function (error) {            
+                // error handler
+                alert("error :" + error.message)
+           }
+
+       });
+
+   }
+   catch(error)
+   {
+    alert(error);
+   }
+
+}
+
+
+function updateBearDemo()
+{
+  try
+  {
+
+    var bearId = sessionStorage.bearId;
+   
+    var myBear = new BearObject(
+     $("#nombre").val() 
+      
+     );
+  
+    alert(bearId);
+
+     jQuery.ajax({
+           type: "PUT",
+           url: "http://localhost:8087/api/devices/" + bearId,
+           headers: {
+            'Content-Type':'application/x-www-form-urlencoded'
+           },
+           data: {'token': sessionStorage.token,
+                  'name': myBear.name },
+           contentType: "application/json; charset=utf-8",
+           dataType: "json",
+           success: function (response) {
+                // do something
+                alert ("Updated : " + " " + response.message);
+                getBearList();
+           },
+       
+           error: function (error) {            
+                // error handler
+                alert("error :" + error.message)
+           }
+
+       });
+
+   }
+   catch(error)
+   {
+    alert(error);
+   }
+
+}
+
+
+function deleteBearDemo(bearId)
+{
+  try
+  {
+
+
+    alert(bearId);
+
+     jQuery.ajax({
+           type: "DELETE",
+           url: "http://localhost:8087/api/devices/" + bearId,
+           headers: {
+            'Content-Type':'application/x-www-form-urlencoded'
+           },
+           data: {'token': sessionStorage.token},
+           dataType: "json",
+           success: function (response) {
+                // do something
+                alert (response + " " + response.message);
+                getBearList();
+           },
+       
+           error: function (error) {            
+                // error handler
+                alert("error :" + error.message);
+
+           }
+
+       });
+
+   }
+   catch(error)
+   {
+    alert(error);
+   }
+
+}
+
+
+function getOneBearDemo(bearId)
+{
+  try
+  {
+
+    sessionStorage.bearId = bearId;
+  
+    alert(bearId);
+
+     jQuery.ajax({
+           type: "GET",
+           url: "http://localhost:8087/api/devices/" + bearId,
+           headers: {
+            'Content-Type':'application/x-www-form-urlencoded'
+           },
+           data: {'token': sessionStorage.token},
+           dataType: "json",
+           success: function (response) {
+                // do something
+                $("#nombre").val(response.name);
+                alert (response.name);
+                 
+           },
+       
+           error: function (error) {            
+                // error handler
+                alert("error :" + error.message)
+           }
+
+       });
+
+   }
+   catch(error)
+   {
+    alert(error);
+   }
+
+}
+
+function getBearList()
+{
+  try
+  {
+
+
+    
+
+     jQuery.ajax({
+           type: "GET",
+           url: "http://localhost:8087/api/devices",
+           contentType: "application/json; charset=utf-8",
+           headers: {
+            'Content-Type':'application/x-www-form-urlencoded'
+           },
+           data: {'token': sessionStorage.token},
+           dataType: "json",
+           success: function (response) {
+               alert(response);
+            $("#divBears").empty()
+               response.forEach(function (tweet) 
+               {
+             
+                var nombre = "<div>" +
+                 "<button onclick=\"getOneBearDemo('" + tweet._id + "')\"> GET (one) </button> " +
+                  " | " + 
+                  "" + tweet._id + "" +
+                  " | " +  
+                  "" + tweet.name + "" +
+                  " | " +  
+                 
+                  "<button onclick=\"deleteBearDemo('" + tweet._id + "')\"> DELETE </button> " +
+                       "</div>" 
+                   $("#divBears").append(nombre);
+               
+               });
+              
+               
+           },
+       
+           error: function (error) {            
+                // error handler
+                alert("error :" + error.message)
+           }
+
+       });
+
+   }
+   catch(error)
+   {
+    alert(error);
+   }
+
+}
+
+</script>
+
+</head>
+<body>
+
+
+<!-- Home section
+================================================== -->
+<section id="home" class="parallax-section">
+  <div class="container">
+    <div class="row">
+
+  <h1>Bears - Web-token CRUD</h1>
+
+  name: <input type="text" id="nombre" value="adsoft" /> <br>
+
+
+
+<button onclick="addBearDemo()"> POST (new) </button> 
+<br>
+<button onclick="updateBearDemo()"> PUT (update) </button>
+
+    </div>
+  </div>    
+</section>
+
+
+
+<!-- Section title
+      ================================================== -->
+      <div class="col-md-8 col-sm-8">
+        <div class="section-title">
+          <h5>Bear MEMBERS</h5>
+          <button onclick="getBearList()"> GET (all) </button> 
+          <br></br>
+        </div>
+      </div>  
+
+
+<!-- bears section
+================================================== -->
+<section id="team" class="parallax-section">
+  <div class="container">
+    <div class="row" id="divBears">
+
+      
+
+    </div>
+  </div>
+</section>
+
+
+
+</body>
+</html>

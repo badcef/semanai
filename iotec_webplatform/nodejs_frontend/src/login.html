@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+ <title>
+   login demo
+ </title>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
+<script>
+// contact
+function LoginObject(myEmail, myPasswd) {
+    this.name = myEmail;
+    this.password = myPasswd;
+    this.toJsonString = function () { return JSON.stringify(this); };
+
+};
+
+function loginDemo()
+{
+  try
+  {
+	//alert("testing...")
+	 //var myData = new LoginObject(
+   //  $("#email").val(), 
+   //  $("#passwd").val());
+	
+   //alert(myData.toJsonString());
+
+	 jQuery.ajax({
+         type: "POST",
+         url: "http://localhost:8087/api/authenticate",
+         data: { "name" : $("#email").val(),
+               "password" : $("#passwd").val()
+               },
+         contentType: "application/json; charset=utf-8",
+         headers: {
+           'Content-Type':'application/x-www-form-urlencoded'
+           
+         },
+         dataType: "json",
+         success: function (response) {
+              // do something
+              alert(response.message);
+              //var myresp = JSON.parse(response);
+              //alert(myresp);
+
+              sessionStorage.token = response.token;
+              alert ("token generado: " + sessionStorage.token);
+              window.location = "/admin";
+
+         },
+     
+         error: function (error) {            
+              // error handler
+              alert(" error : " + error)
+         }
+
+     });
+ }
+ catch(myerror)
+ {
+  alert ("error en llamada : " + myerror);
+ }
+
+}
+
+</script>
+
+</head>
+<body>
+
+<h1> Login demo</h1>
+
+email: <input type="text" id="email" value="adsoft" />
+
+<br>
+password: <input type="text" id="passwd" value="qubit"/>
+<br>
+<button onclick="loginDemo()"> login Demo </button> 
+</body>
+</html>

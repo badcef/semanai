@@ -1,0 +1,143 @@
+<html>
+
+<head>
+ <title>
+   new - demo
+ </title>
+
+
+<script src="js/jquery.js"></script>
+
+<script>
+// contact
+function BearObject(myNombre, myPuesto) {
+    
+    this.name = myNombre;
+    
+    this.token = sessionStorage.token;
+    
+    this.toJsonString = function () { return JSON.stringify(this); };
+
+};
+
+
+function addBearDemo()
+{
+	try
+  {
+
+
+    alert("token : " + sessionStorage.token);
+
+  	var myData = new BearObject(
+     $("#nombre").val() 
+      
+     );
+  	alert(myData.toJsonString());
+
+  	 jQuery.ajax({
+           type: "POST",
+           url: "http://localhost:8082/api/bears",
+           headers: {
+            'Content-Type':'application/x-www-form-urlencoded'
+           },
+           data: {'token': sessionStorage.token,
+                  'name': myData.name },
+           contentType: "application/json; charset=utf-8",
+           dataType: "json",
+           success: function (response) {
+                // do something
+                alert (response.code + " " + response.message);
+           },
+       
+           error: function (error) {            
+                // error handler
+                alert("error :" + error.message)
+           }
+
+       });
+
+   }
+   catch(error)
+   {
+    alert(error);
+   }
+
+}
+
+
+function TokenObject() {
+    
+    this.tokenint = sessionStorage.token;
+    this.toJsonString = function () { return JSON.stringify(this); };
+
+};
+
+
+function getBearList()
+{
+  try
+  {
+
+
+    alert("token : " + sessionStorage.token);
+
+
+     jQuery.ajax({
+           type: "GET",
+           url: "http://localhost:8082/api/bears",
+           headers: {
+            'Content-Type':'application/x-www-form-urlencoded'
+           },
+           data: {'token': sessionStorage.token},
+           contentType: "application/json; charset=utf-8",
+           dataType: "json",
+           success: function (response) {
+                // do something
+                alert(JSON.stringify(response));
+                
+               response.forEach(function (tweet) 
+               {
+             
+                  alert(tweet.name)
+               });
+
+           },
+       
+           error: function (error) {            
+                // error handler
+                alert("error :" + error.message)
+           }
+
+       });
+
+   }
+   catch(error)
+   {
+    alert(error);
+   }
+
+}
+
+</script>
+
+</head>
+<body>
+
+
+<h1> Add Bear</h1>
+
+name: <input type="text" id="nombre" value="adsoft" /> <br>
+
+
+<br>
+<button onclick="addBearDemo()"> POST </button> 
+
+<br>
+<br>
+
+<button onclick="getBearList()"> GET (all) </button> 
+
+
+</body>
+</html>
